@@ -1,4 +1,5 @@
 import { useActionState, startTransition } from 'react';
+import styles from './styles.module.css';
 
 export default function CounterUseActionState() {
   const initialState = { count: 0 };
@@ -20,25 +21,26 @@ export default function CounterUseActionState() {
   };
 
   return (
-    <div
-      style={{
-        padding: '20px',
-        border: '1px solid #ccc',
-        borderRadius: '8px',
-        marginTop: '20px',
-      }}
-    >
-      <h2>Counter with useActionState</h2>
+    <div className={styles.componentContainer}>
+      <h2 className={styles.title}>Counter with useActionState</h2>
       <p>Current count: {state?.count}</p>
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <button onClick={handleDecrement} disabled={isPending}>
+      <div className={styles.buttonContainer}>
+        <button
+          onClick={handleDecrement}
+          disabled={isPending}
+          className={styles.button}
+        >
           Decrement
         </button>
-        <button onClick={handleIncrement} disabled={isPending}>
+        <button
+          onClick={handleIncrement}
+          disabled={isPending}
+          className={styles.button}
+        >
           Increment
         </button>
       </div>
-      {isPending && <p>Updating...</p>}
+      {isPending && <p className={styles.pendingMessage}>Updating...</p>}
     </div>
   );
 }
