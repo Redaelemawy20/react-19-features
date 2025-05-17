@@ -7,7 +7,9 @@ export default function FormUseActionState() {
     <form action={formAction}>
       <input type="text" name="name" />
       <input type="email" name="email" />
-      <button type="submit">Submit</button>
+      <button type="submit" disabled={isPending}>
+        Submit
+      </button>
       {isPending && <p>Sending...</p>}
     </form>
   );
