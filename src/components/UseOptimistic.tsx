@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import styles from './styles.module.css';
 
 export default function UseOptimistic() {
   const [username, setUsername] = useState('');
   const [users, setUsers] = useState<string[]>(['John', 'Jane', 'Jim', 'Jill']);
   const [isLoading, setIsLoading] = useState(false);
-  const handleAddUser = async () => {
+  const handleAddUser = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsLoading(true);
     await createUser(username);
     setUsers([...users, username]);
@@ -12,24 +14,31 @@ export default function UseOptimistic() {
     setIsLoading(false);
   };
   return (
-    <form>
-      <h1>Without Optimistic</h1>
-      <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <button onClick={handleAddUser} disabled={isLoading}>
-        {isLoading ? 'Adding...' : 'Add User'}
-      </button>
-      <br />
+    <div className={styles.componentContainer}>
+      <h2 className={styles.title}>Without Optimistic</h2>
+      <form onSubmit={handleAddUser}>
+        <input
+          type="text"
+          className={styles.inputField}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={styles.button}
+          //   onClick={handleAddUser}
+        >
+          {isLoading ? 'Adding...' : 'Add User'}
+        </button>
+      </form>
       <h2>Users</h2>
-      <div>
+      <div className={styles.userList}>
         {users.map((user) => (
           <div key={user}>{user}</div>
         ))}
       </div>
-    </form>
+    </div>
   );
 }
 
