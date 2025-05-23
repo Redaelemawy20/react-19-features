@@ -28,23 +28,29 @@ export default function UseOptimistic() {
     e.preventDefault();
     startTransition(async () => {
       if (!username.trim()) return;
-      console.log('sending');
-      const newUser = username.trim();
-      setUsername('');
-      setError(null);
-      console.log('adding optimistic user');
-      addOptimisticUser({
-        id: Math.floor(Math.random() * 1000000), // integer number
-        name: newUser,
-        pending: true,
-      });
-      console.log('creating user');
-      await createUser(newUser);
-      console.log('user created');
-      setConfirmedUsers((prev) => [
-        ...prev,
-        { id: prev.length + 1, name: newUser },
-      ]);
+      try {
+        console.log('sending');
+        const newUser = username.trim();
+        setUsername('');
+        setError(null);
+        console.log('adding optimistic user');
+        addOptimisticUser({
+          id: Math.floor(Math.random() * 1000000), // integer number
+          name: newUser,
+          pending: true,
+        });
+        console.log('creating user');
+        await createUser(newUser);
+        console.log('user created');
+        setConfirmedUsers((prev) => [
+          ...prev,
+          { id: prev.length + 1, name: newUser },
+        ]);
+      } catch (error) {
+        console.log('error');
+        setError('Failed to add user. Please try again.');
+        console.log(error);
+      }
     });
   };
 
