@@ -1,4 +1,4 @@
-import { useOptimistic, useState } from 'react';
+import { useActionState, useOptimistic, useState } from 'react';
 import styles from './styles.module.css';
 
 interface User {
@@ -22,7 +22,7 @@ export default function UseOptimistic() {
     OptimisticUser[],
     OptimisticUser
   >(confirmedUsers, (state, newUser) => [...state, newUser]);
-  const handleAddUser = async (formData: FormData) => {
+  const handleAddUser = async (prevState: unknown, formData: FormData) => {
     const username = formData.get('username') as string;
     if (!username.trim()) return;
     try {
@@ -47,6 +47,7 @@ export default function UseOptimistic() {
       console.log(error);
     }
   };
+  const [state, formAction, isPending] = useActionState(handleAddUser, null);
 
   return (
     <div className={styles.componentContainer}>
@@ -54,9 +55,9 @@ export default function UseOptimistic() {
         With Optimistic Updates - using form action
       </h2>
       {error && <div className={styles.error}>{error}</div>}
-      <form action={handleAddUser}>
+      <form action={formAction}>
         <input type="text" name="username" className={styles.inputField} />
-        <button type="submit" className={styles.button}>
+        <button type="submit" className={styles.button} disabled={isPending}>
           Add User
         </button>
       </form>
