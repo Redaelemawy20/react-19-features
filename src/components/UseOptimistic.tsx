@@ -1,4 +1,4 @@
-import { useOptimistic, useState, useTransition } from 'react';
+import { useOptimistic, useState } from 'react';
 import styles from './styles.module.css';
 
 interface User {
@@ -10,7 +10,6 @@ interface OptimisticUser extends User {
 }
 
 export default function UseOptimistic() {
-  const [username, setUsername] = useState('');
   const [confirmedUsers, setConfirmedUsers] = useState<User[]>([
     { id: 1, name: 'John' },
     { id: 2, name: 'Jane' },
@@ -23,54 +22,41 @@ export default function UseOptimistic() {
     OptimisticUser[],
     OptimisticUser
   >(confirmedUsers, (state, newUser) => [...state, newUser]);
-  const [isPending, startTransition] = useTransition();
-  const handleAddUser = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    startTransition(async () => {
-      if (!username.trim()) return;
-      try {
-        console.log('sending');
-        const newUser = username.trim();
-        setUsername('');
-        setError(null);
-        console.log('adding optimistic user');
-        addOptimisticUser({
-          id: Math.floor(Math.random() * 1000000), // integer number
-          name: newUser,
-          pending: true,
-        });
-        console.log('creating user');
-        await createUser(newUser);
-        console.log('user created');
-        setConfirmedUsers((prev) => [
-          ...prev,
-          { id: prev.length + 1, name: newUser },
-        ]);
-      } catch (error) {
-        console.log('error');
-        setError('Failed to add user. Please try again.');
-        console.log(error);
-      }
-    });
+  const handleAddUser = async (formData: FormData) => {
+    const username = formData.get('username') as string;
+    if (!username.trim()) return;
+    try {
+      console.log('sending');
+      setError(null);
+      console.log('adding optimistic user');
+      addOptimisticUser({
+        id: Math.floor(Math.random() * 1000000), // integer number
+        name: username,
+        pending: true,
+      });
+      console.log('creating user');
+      await createUser(username);
+      console.log('user created');
+      setConfirmedUsers((prev) => [
+        ...prev,
+        { id: prev.length + 1, name: username },
+      ]);
+    } catch (error) {
+      console.log('error');
+      setError('Failed to add user. Please try again.');
+      console.log(error);
+    }
   };
 
   return (
     <div className={styles.componentContainer}>
-      <h2 className={styles.title}>With Optimistic Updates</h2>
+      <h2 className={styles.title}>
+        With Optimistic Updates - using form action
+      </h2>
       {error && <div className={styles.error}>{error}</div>}
-      <form>
-        <input
-          type="text"
-          className={styles.inputField}
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <button
-          type="submit"
-          className={styles.button}
-          onClick={handleAddUser}
-          disabled={isPending}
-        >
+      <form action={handleAddUser}>
+        <input type="text" name="username" className={styles.inputField} />
+        <button type="submit" className={styles.button}>
           Add User
         </button>
       </form>
