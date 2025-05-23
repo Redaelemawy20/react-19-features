@@ -34,7 +34,7 @@ export default function UseOptimistic() {
       setError(null);
       console.log('adding optimistic user');
       addOptimisticUser({
-        id: optimisticUsers.length + 1,
+        id: Math.floor(Math.random() * 1000000), // integer number
         name: newUser,
         pending: true,
       });
