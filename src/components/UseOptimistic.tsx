@@ -1,4 +1,4 @@
-import { startTransition, useOptimistic, useState } from 'react';
+import { useOptimistic, useState, useTransition } from 'react';
 import styles from './styles.module.css';
 
 interface User {
@@ -23,7 +23,7 @@ export default function UseOptimistic() {
     OptimisticUser[],
     OptimisticUser
   >(confirmedUsers, (state, newUser) => [...state, newUser]);
-
+  const [isPending, startTransition] = useTransition();
   const handleAddUser = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     startTransition(async () => {
@@ -59,7 +59,12 @@ export default function UseOptimistic() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <button type="submit" className={styles.button} onClick={handleAddUser}>
+        <button
+          type="submit"
+          className={styles.button}
+          onClick={handleAddUser}
+          disabled={isPending}
+        >
           Add User
         </button>
       </form>
