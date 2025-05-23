@@ -26,25 +26,19 @@ export default function UseOptimistic() {
     const username = formData.get('username') as string;
     if (!username.trim()) return;
     try {
-      console.log('sending');
       setError(null);
-      console.log('adding optimistic user');
       addOptimisticUser({
         id: Math.floor(Math.random() * 1000000), // integer number
         name: username,
         pending: true,
       });
-      console.log('creating user');
       await createUser(username);
-      console.log('user created');
       setConfirmedUsers((prev) => [
         ...prev,
         { id: prev.length + 1, name: username },
       ]);
     } catch (error) {
-      console.log('error');
       setError('Failed to add user. Please try again.');
-      console.log(error);
     }
   };
   const [state, formAction, isPending] = useActionState(handleAddUser, null);
@@ -75,14 +69,12 @@ export default function UseOptimistic() {
 
 // simulate create user api call
 const createUser = (username: string) => {
-  console.log('creating user in api');
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       // Simulate a 10% chance of API failure for demonstration
       if (Math.random() < 0.1) {
         reject(new Error('Network error'));
       } else {
-        console.log('user created in api');
         resolve(username);
       }
     }, 5000);
